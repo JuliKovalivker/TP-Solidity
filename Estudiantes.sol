@@ -1,21 +1,21 @@
 //SPOX-License-Identifier: MIT
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
 contract Estudiante{
 
-    string private nombre;
+    string private _nombre;
     string private _apellido;
     string private _curso;
-    address private docente;
+    address private _docente;
     mapping(string => uint) private notas_materias;
-    string[] private materias;
+    string[] private _materias;
 
-    constructor(string memory _nombre, string memory apellido_, string memory curso_){
-        nombre = _nombre;
+    constructor(string memory nombre_, string memory apellido_, string memory curso_){
+        _nombre = nombre_;
         _apellido = apellido_;
         _curso = curso_;
-        docente = msg.sender;
+        _docente = msg.sender;
     }
 
     function apellido() public view returns (string memory){
@@ -23,7 +23,7 @@ contract Estudiante{
     }
 
     function nombre_completo() public view returns (string memory){
-       return string(bytes.concat(bytes(nombre), " ", bytes(_apellido)));
+       return string(bytes.concat(bytes(_nombre), " ", bytes(_apellido)));
     }
 
     function curso() public view returns (string memory){
@@ -31,9 +31,11 @@ contract Estudiante{
     }
 
     function set_nota_materia(string memory materia, uint nota) public {
-        require (docente == msg.sender, "No sos el docente");
+        require (_docente == msg.sender, "No sos el docente");
+            if(notas_materias[materia] != 0){
+            _materias.push(materia);
+            }
             notas_materias[materia] = nota;
-            materias.push(materia);
     }
 
     function nota_materia(string memory materia) public view returns (uint){
@@ -51,9 +53,9 @@ contract Estudiante{
 
     function promedio() public view returns (uint){
         uint _promedio = 0;
-        for(uint i = 0; i < materias.length; i++){
-            _promedio += notas_materias[materias[i]];
+        for(uint i = 0; i < _materias.length; i++){
+            _promedio += notas_materias[_materias[i]];
         }
-        return _promedio / materias.length;
+        return _promedio / _materias.length;
     }
 }
